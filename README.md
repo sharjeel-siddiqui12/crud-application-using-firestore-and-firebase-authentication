@@ -1,4 +1,4 @@
-# Project Name
+# Crud Application Using Firestore & Firebase Authentication
 
 This project is a CRUD application built using Firestore and Firebase Authentication. It utilizes Firebase Hosting for site deployment, Tailwind for styling, and React for building the site.
 
