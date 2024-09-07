@@ -7,8 +7,10 @@ import {
   getFirestore, collection,
   addDoc, getDocs, doc,
   onSnapshot, query, serverTimestamp,
-  orderBy, deleteDoc, updateDoc
+  orderBy, deleteDoc, updateDoc,
+  where
 } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 
 
 
@@ -28,9 +30,14 @@ function Home() {
 
   useEffect(() => {
     let unsubscribe = null;
+    const auth = getAuth();
 
     const getRealtimeData = async () => {
-      const q = query(collection(db, "posts"), orderBy("createdOn", "desc"));
+      const q = query(
+        collection(db, "posts"),
+        orderBy("createdOn", "desc"), // Ensure orderBy is after where
+        where("user", "==", auth.currentUser.email)
+     );
 
       unsubscribe = onSnapshot(q, (querySnapshot) => {
         const posts = [];
@@ -53,9 +60,11 @@ function Home() {
 
   const savePost = async (e) => {
     e.preventDefault();
+    const auth = getAuth();
     try {
       const docRef = await addDoc(collection(db, "posts"), {
         text: postText,
+        user: auth.currentUser.email,
         createdOn: serverTimestamp(),
       });
       console.log("Document written with ID: ", docRef.id);
